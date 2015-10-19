@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BackGround : MonoBehaviour {
+public class backGround : MonoBehaviour {
 
     public float speed;
     public GameObject mybackground;

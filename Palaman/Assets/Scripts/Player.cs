@@ -2,18 +2,18 @@
 using System.Collections;
 using System.Threading;
 
-public class Player : MonoBehaviour {
+public class player : MonoBehaviour {
 
     private Rigidbody2D myRB2D;
-    public GameObject mycamera;
+    public GameObject mycamera,peakObj;
     private Vector3 offset;
+    public bool rigth = false;
     public float speed;
     public bool jumping = false;
 
     public Transform groundCheck;
     public LayerMask whatIsGround;
     bool grounded = false;
-    float groundRadius = 0.2f;
     public float jumpForce = 100f;
 
     private Animator anima;
@@ -29,16 +29,17 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {      
-        Saltar();
-        Caminar();
+        saltar();
+        caminar();
         cavar();
         mycamera.transform.position = this.transform.position + offset ;
 	}
 
+
     void FixedUpdate()
     {
         anima.SetBool("hSpeed", run); // Envia valor run al animator
-        grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
+        grounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, whatIsGround);
         // detectamos si estamos colisionando con tierra dando la posision, radio y objetos que acepte colisionar
         anima.SetBool("Ground", grounded); // envio el valor de grounded al animator
         if (grounded)
@@ -49,13 +50,14 @@ public class Player : MonoBehaviour {
         {
             jumping = true;
         }
-        anima.SetBool("Ground", jumping); // ya no estoy en tierra
+        anima.SetBool("Jump",jumping);
     }
 
-    private void Caminar()
+    private void caminar()
 {
  	if (Input.GetAxis("Horizontal") < 0) // mirando a la derecha
         {
+            rigth = false;
             Vector3 newScale = transform.localScale; // obtengo los valores de la imagen x default
             newScale.x = -0.8f; // giro
             transform.localScale = newScale; // aplico el giro de imagen
@@ -66,6 +68,7 @@ public class Player : MonoBehaviour {
         {
             if (Input.GetAxis("Horizontal") > 0)// mirando a la Izquierda
             {
+                rigth = true;
                 Vector3 newScale = transform.localScale; // obtengo los valores de la imagen x default
                 newScale.x = 0.8f; // giro
                 transform.localScale = newScale; // aplico el giro de imagen
@@ -79,19 +82,18 @@ public class Player : MonoBehaviour {
     }
 }
 
-    private void Saltar()
+    private void saltar()
     {
         if (grounded && Input.GetKeyDown(KeyCode.Space)) 
             // estoy pisando tierra y preciono spacio
         {
             myRB2D.AddForce(new Vector2(0, jumpForce)); // salto sobre el eje Y
             anima.SetBool("Ground", false); // ya no estoy en tierra
-            anima.SetBool("Jump", false); // ya no estoy en tierra
+            anima.SetBool("Jump", true); // ya no estoy en tierra
         }
         else
         {
             anima.SetBool("Ground", grounded); // estoy pisando tierra
-            anima.SetBool("Ground", grounded); // ya no estoy en tierra
         }
     }
 
@@ -99,7 +101,20 @@ public class Player : MonoBehaviour {
     {
         if(Input.GetKeyDown(KeyCode.Z))
         {
+            if (rigth)
+            {
+                Instantiate(peakObj, new Vector3(this.transform.position.x + 1f, this.transform.position.y, -1f), transform.rotation);
+            }
+            else
+            {
+                Instantiate(peakObj, new Vector3(this.transform.position.x - 1f, this.transform.position.y, -1f), transform.rotation);
+            }
+            
             anima.SetBool("Dig",true);
         }
+    }
+
+    void finCavar() {
+        anima.SetBool("Dig", false);
     }
 }
