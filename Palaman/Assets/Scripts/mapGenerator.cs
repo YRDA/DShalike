@@ -7,7 +7,7 @@ using System.IO;
 
 public class mapGenerator : MonoBehaviour {
     
-    public GameObject gamePlayer,groundSup,groundInf,waterSup,waterInf,lavaSup,lavaInf,rockSup,rockInf;
+    public GameObject superBlock,groundSup,groundInf,waterSup,waterInf,lavaSup,lavaInf,rockSup,rockInf;
 
 
     int[] grid;
@@ -17,11 +17,6 @@ public class mapGenerator : MonoBehaviour {
 	void Start () {
         //crearpiso();
         GenerarMapa();
-	}
-
-	// Update is called once per frame
-	void Update () {
-     
 	}
 
     private void GenerarMapa()
@@ -51,7 +46,7 @@ public class mapGenerator : MonoBehaviour {
                     switch (b[3])
                     {
                         case "0":
-                            Instantiate(gamePlayer, new Vector3(blockX, blockY, -1), transform.rotation);
+                            Instantiate(superBlock, new Vector3(blockX, blockY, -1), transform.rotation);
                             break;
                         case "1":
                             Instantiate(groundSup, new Vector3(blockX, blockY, -1), transform.rotation);
@@ -102,53 +97,6 @@ public class mapGenerator : MonoBehaviour {
         }
 
     }
-
-    static void escribir(float x, float y, int block, int typeBlock)
-    {
-        string strX, strY, strBlock, strTypeBlock;
-        strX = x.ToString();
-        strY = y.ToString();
-        strBlock = block.ToString();
-        strTypeBlock = typeBlock.ToString();
-
-        //Primero creamos una estancia de StreamWriter.
-
-        var txtLevel = new StreamWriter(Application.dataPath + "\\Levels/txt/Level01.txt", true);
-
-        // (path , true) true = escribir bajo lo ya escrito
-
-        //A partir de aqui, escribimos lo que queramos
-        txtLevel.WriteLine(strX + "|" + strY + "|" + strBlock + "|" + strTypeBlock);
-
-        //Cerramos la instancia de StreamWriter
-        txtLevel.Close();
-    }
    
-    private void crearpiso()
-    {
-        float spacey = 0f;
-
-        for (int j = -15; j < 15; j++)
-        {
-            float spacex = 0f;
-
-            for (int i = -100; i < 6; i++)
-            {
-                if (j < -10 && j < -9)
-                {
-                    Instantiate(groundInf, new Vector3(i + spacex, j + spacey, -1), transform.rotation);
-                }
-                else
-                {
-                    if (j < -9)
-                    {
-                        Instantiate(groundSup, new Vector3(i + spacex, j + spacey, -1), transform.rotation);
-                    }
-                }
-                spacex += 0.18f;
-            }
-            spacey += 0.225f;
-        }
-    }
 }
 

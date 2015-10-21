@@ -5,7 +5,7 @@ public class Peak : MonoBehaviour {
 
     void OnTriggerEnter2D (Collider2D obj)
     {
-        if (obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)")
+        if (obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)" || obj.gameObject.name == "Shalike")
         {
             Destroy(this.gameObject);
         }

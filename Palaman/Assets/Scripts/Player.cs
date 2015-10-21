@@ -19,7 +19,6 @@ public class player : MonoBehaviour {
     private Animator anima;
     public bool run = false;
 
-
 	// Use this for initialization
 	void Start () {
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
@@ -117,4 +116,5 @@ public class player : MonoBehaviour {
     void finCavar() {
         anima.SetBool("Dig", false);
     }
+
 }
