@@ -46,8 +46,7 @@ public class creatorMap : MonoBehaviour {
                 float yy = spaceY + i;
                 if ( blockx == xx && blocky == yy)
                 {
-                    string stringblock = Convert.ToString(blockx + "|" + blocky + "|" + block + "|" + typeblock);
-                    id[countId] = stringblock;
+                    id[countId] = Convert.ToString(blockx + "|" + blocky + "|" + block + "|" + typeblock);
                     Debug.Log(id[countId]);
                 }
                 countId += 1;

@@ -8,8 +8,7 @@ public class masterBlockCode : MonoBehaviour {
     string valuesBlock;
     int typeBlock = 0;
     Animator animaBlocks;
-    creatorMap maping = new creatorMap();
-
+    bool bandera = false;
 	// Update is called once per frame
 
     void Start()
@@ -22,17 +21,17 @@ public class masterBlockCode : MonoBehaviour {
 
     void OnMouseDown()
     {
-        //var maping = gameObject.AddComponent<creatorMap>();
+        creatorMap mapeo = GameObject.Find("Level0").GetComponent<creatorMap>();
 
         if (typeBlock == 8)
         {
             typeBlock = 0;
-            maping.actualizarvalues(transform.position.x,transform.position.y,0,0);
+            mapeo.actualizarvalues(transform.position.x,transform.position.y,0,0);
         }
         else
         {
             typeBlock += 1;
-            maping.actualizarvalues(transform.position.x, transform.position.y, 1, typeBlock);
+            mapeo.actualizarvalues(transform.position.x, transform.position.y, 1, typeBlock);
         }
     }
 }
