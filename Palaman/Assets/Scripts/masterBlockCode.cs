@@ -8,7 +8,6 @@ public class masterBlockCode : MonoBehaviour {
     string valuesBlock;
     int typeBlock = 0;
     Animator animaBlocks;
-    bool bandera = false;
 	// Update is called once per frame
 
     void Start()

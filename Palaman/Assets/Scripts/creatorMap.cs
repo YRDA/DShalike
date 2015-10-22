@@ -10,13 +10,10 @@ public class creatorMap : MonoBehaviour {
     float spaceX = 0.0f;
     float spaceY = 0.0f;
     public string[] id = new string[1006];
+    public string nivel;
+    int moveSpeed = 300;
     int countId = 0;
-
-    void Update()
-    {
-        generarmapa();
-    }
-
+    
    	void Start () {
         for (int i = minY; i < maxY; i++)
         {
@@ -24,7 +21,7 @@ public class creatorMap : MonoBehaviour {
             for (int j = minX; j < maxX; j++)
             {
                 Instantiate(superBlockMaster, new Vector3(spaceX + j, spaceY + i , -1), transform.rotation);
-                id[countId] = "0|0|1|1";
+                id[countId] = "0|0|0|0";
                 spaceX += 0.48f;
                 countId += 1;
             }
@@ -32,6 +29,14 @@ public class creatorMap : MonoBehaviour {
         }        
 	}
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.RightArrow)) transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.UpArrow)) transform.Translate(Vector3.up * moveSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.DownArrow)) transform.Translate(Vector3.down * moveSpeed * Time.deltaTime);
+        if (Input.GetKeyDown(KeyCode.Space)) generarmapa();
+    }
     public void actualizarvalues(float blockx,float blocky,int block, int typeblock)
     {
         countId = 0;
@@ -47,7 +52,6 @@ public class creatorMap : MonoBehaviour {
                 if ( blockx == xx && blocky == yy)
                 {
                     id[countId] = Convert.ToString(blockx + "|" + blocky + "|" + block + "|" + typeblock);
-                    Debug.Log(id[countId]);
                 }
                 countId += 1;
                 spaceX += 0.48f;
@@ -59,7 +63,7 @@ public class creatorMap : MonoBehaviour {
     public void generarmapa()
     {
         //Primero creamos una estancia de StreamWriter.
-        var txtLevel = new StreamWriter(Application.dataPath + "\\Levels/txt/Level01.txt");
+        var txtLevel = new StreamWriter(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
 
         foreach (var item in id)
         {

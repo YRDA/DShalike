@@ -8,14 +8,10 @@ using System.IO;
 public class mapGenerator : MonoBehaviour {
     
     public GameObject superBlock,groundSup,groundInf,waterSup,waterInf,lavaSup,lavaInf,rockSup,rockInf;
-
-
-    int[] grid;
-
+    public string nivel;
 
 	// Use this for initialization
 	void Start () {
-        //crearpiso();
         GenerarMapa();
 	}
 
@@ -26,11 +22,14 @@ public class mapGenerator : MonoBehaviour {
             bool endTxt = true;
             string linea;
             //Primero creamos una estancia de StreamWriter.
-            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level01.txt");
+            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
+
 
             while (endTxt)
             {
                 linea = txtLevel.ReadLine();
+                Debug.Log(linea);
+
                 if (linea == null) endTxt = false;
 
                 string[] b = linea.Split("|"[0]);
