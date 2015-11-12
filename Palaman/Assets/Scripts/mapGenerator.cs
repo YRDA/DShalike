@@ -6,11 +6,19 @@ using System.Linq;
 using System.IO;
 
 public class mapGenerator : MonoBehaviour {
-    
-    public GameObject superBlock,groundSup,groundInf,waterSup,waterInf,lavaSup,lavaInf,rockSup,rockInf;
+
     public string nivel;
 
-	// Use this for initialization
+    public GameObject superBlock;
+    public GameObject groundSup;
+    public GameObject groundInf;
+    public GameObject waterSup;
+    public GameObject waterInf;
+    public GameObject lavaSup;
+    public GameObject lavaInf;
+    public GameObject rockSup;
+    public GameObject rockInf;
+
 	void Start () {
         GenerarMapa();
 	}
@@ -21,14 +29,12 @@ public class mapGenerator : MonoBehaviour {
         {
             bool endTxt = true;
             string linea;
-            //Primero creamos una estancia de StreamWriter.
-            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
 
+            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
 
             while (endTxt)
             {
                 linea = txtLevel.ReadLine();
-                Debug.Log(linea);
 
                 if (linea == null) endTxt = false;
 

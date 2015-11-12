@@ -6,115 +6,129 @@ public class player : MonoBehaviour {
 
     private Rigidbody2D myRB2D;
     public GameObject mycamera,peakObj;
-    private Vector3 offset;
-    public bool rigth = false;
-    public float speed;
-    public bool jumping = false;
+    private Animator anima;
 
+    public float speed;
+    public bool rigth = false;
+    public bool run = false;
+
+    private Vector3 offset;
     public Transform groundCheck;
     public LayerMask whatIsGround;
     bool grounded = false;
-    public float jumpForce = 100f;
 
-    private Animator anima;
-    public bool run = false;
+    public Transform blockFrontCheck;
+    public bool jumping = false;
+    public float jumpForce;
+    public bool fronteo = false;
 
-	// Use this for initialization
 	void Start () {
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
         anima = gameObject.GetComponent<Animator>();
         offset = mycamera.transform.position;
 	}
 	
-	// Update is called once per frame
-	void Update () {      
-        saltar();
-        caminar();
+	void Update () {
+        mycamera.transform.position = new Vector3(this.transform.position.x + offset.x,this.transform.position.y + offset.y + 2,this.transform.position.z + offset.z);
+        saltar(false);
+        caminar(0);
         cavar();
-        mycamera.transform.position = this.transform.position + offset ;
 	}
-
 
     void FixedUpdate()
     {
-        anima.SetBool("hSpeed", run); // Envia valor run al animator
-        grounded = Physics2D.OverlapCircle(groundCheck.position, 0.5f, whatIsGround);
-        // detectamos si estamos colisionando con tierra dando la posision, radio y objetos que acepte colisionar
-        anima.SetBool("Ground", grounded); // envio el valor de grounded al animator
-        if (grounded)
-        {
-            jumping = false;
-        }
-        else
-        {
-            jumping = true;
-        }
+        grounded = Physics2D.OverlapCircle(groundCheck.position, 0.3f, whatIsGround);
+        fronteo = Physics2D.OverlapCircle(blockFrontCheck.position, 0.2f, whatIsGround);
+
+        if (fronteo || anima.GetBool("Jump")) speed = 0;
+        else speed = 0.08f;
+
+        if (grounded) jumping = false;
+        else jumping = true;
+
+        anima.SetBool("hSpeed", run);
+        anima.SetBool("Ground", grounded);
         anima.SetBool("Jump",jumping);
     }
 
-    private void caminar()
-{
- 	if (Input.GetAxis("Horizontal") < 0) // mirando a la derecha
+    public void caminar(int caminando)
+    {
+        if (caminando == -1 && !jumping)
         {
+            run = true; 
             rigth = false;
-            Vector3 newScale = transform.localScale; // obtengo los valores de la imagen x default
-            newScale.x = -0.8f; // giro
-            transform.localScale = newScale; // aplico el giro de imagen
-            run = true; // caminamos [animacion]
-            transform.Translate( Input.GetAxis("Horizontal") * speed, 0f, 0f); // nos desplazamos en el eje x
+
+            transform.Translate(caminando * speed, 0f, 0f);
+
+            Vector3 newScale = transform.localScale;
+            newScale.x = -0.8f; 
+            transform.localScale = newScale;
         }
         else
         {
-            if (Input.GetAxis("Horizontal") > 0)// mirando a la Izquierda
+            if (caminando == 1 && !jumping)
             {
+
+                run = true;
                 rigth = true;
-                Vector3 newScale = transform.localScale; // obtengo los valores de la imagen x default
-                newScale.x = 0.8f; // giro
-                transform.localScale = newScale; // aplico el giro de imagen
-                run = true; // caminamos [animacion]
-                transform.Translate(Input.GetAxis("Horizontal") * speed, 0f, 0f); // nos desplazamos en el eje x
+
+                transform.Translate(caminando * speed, 0f, 0f);
+
+                Vector3 newScale = transform.localScale;
+                newScale.x = 0.8f;
+                transform.localScale = newScale;
             }
-            else
-            {
-                run = false; // nos detenemos [animacion]
-            }
+            else  run = false; 
     }
 }
 
-    private void saltar()
+    public void saltar(bool Jump)
     {
-        if (grounded && Input.GetKeyDown(KeyCode.Space)) 
-            // estoy pisando tierra y preciono spacio
+        if (rigth)
         {
-            myRB2D.AddForce(new Vector2(0, jumpForce)); // salto sobre el eje Y
-            anima.SetBool("Ground", false); // ya no estoy en tierra
-            anima.SetBool("Jump", true); // ya no estoy en tierra
+            if (grounded && fronteo && Jump)
+            {
+                Jump = false;
+                fronteo = false;
+                
+                myRB2D.AddForce(new Vector2(50, jumpForce));
+
+                anima.SetBool("Ground", false);
+                anima.SetBool("Jump", true); 
+            }
         }
         else
         {
-            anima.SetBool("Ground", grounded); // estoy pisando tierra
+            if (grounded && fronteo && Jump)
+            {
+                Jump = false;
+                fronteo = false;
+
+                myRB2D.AddForce(new Vector2(-50, jumpForce));
+
+                anima.SetBool("Ground", false);
+                anima.SetBool("Jump", true); 
+            }
         }
     }
 
     private void cavar()
     {
-        if(Input.GetKeyDown(KeyCode.Z))
+        if(Input.GetKeyDown(KeyCode.Z) && grounded && !jumping && !run)
         {
             if (rigth)
-            {
-                Instantiate(peakObj, new Vector3(this.transform.position.x + 1f, this.transform.position.y, -1f), transform.rotation);
-            }
+            Instantiate(peakObj, new Vector3(this.transform.position.x + 1f, this.transform.position.y, -1f), transform.rotation);
             else
-            {
-                Instantiate(peakObj, new Vector3(this.transform.position.x - 1f, this.transform.position.y, -1f), transform.rotation);
-            }
+            Instantiate(peakObj, new Vector3(this.transform.position.x - 1f, this.transform.position.y, -1f), transform.rotation);
             
             anima.SetBool("Dig",true);
         }
     }
 
     void finCavar() {
+
         anima.SetBool("Dig", false);
+
     }
 
 }
