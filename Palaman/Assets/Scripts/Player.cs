@@ -22,7 +22,10 @@ public class player : MonoBehaviour {
     public float jumpForce;
     public bool fronteo = false;
 
+    mapGenerator controleX;
+
 	void Start () {
+        controleX = GameObject.Find("Generador").GetComponent<mapGenerator>();
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
         anima = gameObject.GetComponent<Animator>();
         offset = mycamera.transform.position;
@@ -33,6 +36,7 @@ public class player : MonoBehaviour {
         caminar(0);
         saltar(false);
         cavar();
+        ColocarBloque();
 	}
 
     void FixedUpdate()
@@ -91,7 +95,7 @@ public class player : MonoBehaviour {
             {
                 Jump = false;
                 fronteo = false;
-                
+
                 myRB2D.AddForce(new Vector2(50, jumpForce));
 
                 anima.SetBool("Ground", false);
@@ -118,9 +122,9 @@ public class player : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Z) && grounded && !jumping && !run)
         {
             if (rigth)
-            Instantiate(peakObj, new Vector3(this.transform.position.x + 1f, this.transform.position.y, -1f), transform.rotation);
+            Instantiate(peakObj, new Vector3(this.transform.position.x + 1.5f, this.transform.position.y, -1f), transform.rotation);
             else
-            Instantiate(peakObj, new Vector3(this.transform.position.x - 1f, this.transform.position.y, -1f), transform.rotation);
+            Instantiate(peakObj, new Vector3(this.transform.position.x - 1.5f, this.transform.position.y, -1f), transform.rotation);
             
             anima.SetBool("Dig",true);
         }
@@ -130,6 +134,14 @@ public class player : MonoBehaviour {
 
         anima.SetBool("Dig", false);
 
+    }
+
+    void ColocarBloque()
+    {
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            controleX.CalculoBloque(transform.position.x, transform.position.y,rigth);
+        }
     }
 
 }

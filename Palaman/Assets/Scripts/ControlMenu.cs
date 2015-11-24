@@ -15,7 +15,7 @@ public class ControlMenu : MonoBehaviour
                 Debug.Log(names.name);
                 break;
             case "Juego Nuevo":
-                Application.LoadLevel("Movies");
+                Application.LoadLevel("Level 01");
                 break;
             case "Opciones":
                 continues.SetBool("Esconder", true);
