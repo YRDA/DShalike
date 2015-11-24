@@ -18,6 +18,7 @@ public class mapGenerator : MonoBehaviour {
     public GameObject lavaInf;
     public GameObject rockSup;
     public GameObject rockInf;
+    public GameObject groundCave;
 
 	void Start () {
         GenerarMapa();
@@ -78,12 +79,15 @@ public class mapGenerator : MonoBehaviour {
                             Instantiate(rockInf, new Vector3(blockX, blockY, -1), transform.rotation);
                             break;
                         case "9":
-                            Instantiate(groundSup, new Vector3(blockX, blockY, -1), transform.rotation);
+                            Instantiate(groundCave, new Vector3(blockX, blockY, -1), transform.rotation);
                             break;
                         case "10":
                             Instantiate(groundSup, new Vector3(blockX, blockY, -1), transform.rotation);
                             break;
                         case "11":
+                            Instantiate(groundSup, new Vector3(blockX, blockY, -1), transform.rotation);
+                            break;
+                        case "12":
                             Instantiate(groundSup, new Vector3(blockX, blockY, -1), transform.rotation);
                             break;
 

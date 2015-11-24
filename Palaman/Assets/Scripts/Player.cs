@@ -30,8 +30,8 @@ public class player : MonoBehaviour {
 	
 	void Update () {
         mycamera.transform.position = new Vector3(this.transform.position.x + offset.x,this.transform.position.y + offset.y + 2,this.transform.position.z + offset.z);
-        saltar(false);
         caminar(0);
+        saltar(false);
         cavar();
 	}
 
@@ -55,7 +55,7 @@ public class player : MonoBehaviour {
     {
         if (caminando == -1 && !jumping)
         {
-            run = true; 
+            run = true;
             rigth = false;
 
             transform.Translate(caminando * speed, 0f, 0f);
@@ -68,7 +68,6 @@ public class player : MonoBehaviour {
         {
             if (caminando == 1 && !jumping)
             {
-
                 run = true;
                 rigth = true;
 
@@ -78,7 +77,9 @@ public class player : MonoBehaviour {
                 newScale.x = 0.8f;
                 transform.localScale = newScale;
             }
-            else  run = false; 
+            else 
+                if (caminando == 0)
+                    run = false; 
     }
 }
 

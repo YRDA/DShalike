@@ -3,37 +3,42 @@ using System.Collections;
 
 public class ControlMenu : MonoBehaviour
 {
-    public GameObject[] opciones;
-    public int contador;
-    bool bandera = true;
 
-    void Update()
+    public  Animator continues, newgame, options, exit, Optionsub;
+
+    public void buttonclick(GameObject names)
     {
-        if (Input.touchCount > 0 || Input.GetMouseButtonDown(0))
-        {
-            if (bandera)
-            {
-                bandera = false;
-                GameObject.Find("Toca la Pantalla").SetActive(false);
-            }
 
-            Debug.Log(Input.mousePosition);
-            for (int i = 0; i < 6 ; i++)
-            {
-                if (contador == i)
-                {
-                    if (contador == 5)
-                    {
-                        contador = -1;
-                    }
-                    else
-                    {
-                        Destroy(GameObject.FindWithTag("Options"));
-                        Instantiate(opciones[contador], new Vector2(0, -3.5f), transform.rotation);
-                    }
-                }
-            }
-            contador += 1;          
-        } 
+        switch (names.name)
+        {
+            case "Continuar":
+                Debug.Log(names.name);
+                break;
+            case "Juego Nuevo":
+                Application.LoadLevel("Movies");
+                break;
+            case "Opciones":
+                continues.SetBool("Esconder", true);
+                newgame.SetBool("Esconder", true);
+                options.SetBool("Esconder", true);
+                exit.SetBool("Esconder", true);
+                Optionsub.SetBool("Esconder", true);
+                break;
+            case "Regresar":
+                continues.SetBool("Esconder", false);
+                newgame.SetBool("Esconder", false);
+                options.SetBool("Esconder", false);
+                exit.SetBool("Esconder", false);
+                Optionsub.SetBool("Esconder", false);
+                break;
+            case "Salir":
+                Application.Quit();
+                break;
+            default:
+                break;
+        }
     }
+
+
+        
 }

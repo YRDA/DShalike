@@ -22,7 +22,7 @@ public class masterBlockCode : MonoBehaviour {
     {
         creatorMap mapeo = GameObject.Find("Level0").GetComponent<creatorMap>();
 
-        if (typeBlock == 8)
+        if (typeBlock == 9)
         {
             typeBlock = 0;
             mapeo.actualizarvalues(transform.position.x,transform.position.y,0,0);
