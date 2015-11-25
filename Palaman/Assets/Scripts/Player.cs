@@ -22,9 +22,11 @@ public class player : MonoBehaviour {
     public float jumpForce;
     public bool fronteo = false;
 
+    Controles ControlesPlayer;
     mapGenerator controleX;
 
 	void Start () {
+        ControlesPlayer = GameObject.Find("Inventario").GetComponent<Controles>();
         controleX = GameObject.Find("Generador").GetComponent<mapGenerator>();
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
         anima = gameObject.GetComponent<Animator>();
@@ -57,7 +59,7 @@ public class player : MonoBehaviour {
 
     public void caminar(int caminando)
     {
-        if (caminando == -1 && !jumping)
+        if (caminando == -1 && !jumping && !ControlesPlayer.PAUSA)
         {
             run = true;
             rigth = false;
@@ -70,7 +72,7 @@ public class player : MonoBehaviour {
         }
         else
         {
-            if (caminando == 1 && !jumping)
+            if (caminando == 1 && !jumping && !ControlesPlayer.PAUSA)
             {
                 run = true;
                 rigth = true;
@@ -91,7 +93,7 @@ public class player : MonoBehaviour {
     {
         if (rigth)
         {
-            if (grounded && fronteo && Jump)
+            if (grounded && fronteo && Jump && !ControlesPlayer.PAUSA)
             {
                 Jump = false;
                 fronteo = false;
@@ -104,7 +106,7 @@ public class player : MonoBehaviour {
         }
         else
         {
-            if (grounded && fronteo && Jump)
+            if (grounded && fronteo && Jump && !rigth && !ControlesPlayer.PAUSA)
             {
                 Jump = false;
                 fronteo = false;
@@ -119,7 +121,7 @@ public class player : MonoBehaviour {
 
     private void cavar()
     {
-        if(Input.GetKeyDown(KeyCode.Z) && grounded && !jumping && !run)
+        if (Input.GetKeyDown(KeyCode.Z) && grounded && !jumping && !run && !ControlesPlayer.PAUSA)
         {
             if (rigth)
             Instantiate(peakObj, new Vector3(this.transform.position.x + 1.5f, this.transform.position.y, -1f), transform.rotation);
@@ -138,7 +140,7 @@ public class player : MonoBehaviour {
 
     void ColocarBloque()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(KeyCode.X) && !ControlesPlayer.PAUSA)
         {
             controleX.CalculoBloque(transform.position.x, transform.position.y,rigth);
         }
