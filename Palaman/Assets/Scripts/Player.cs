@@ -21,13 +21,14 @@ public class player : MonoBehaviour {
     public bool jumping = false;
     public float jumpForce;
     public bool fronteo = false;
+    bool boolForceDown = true;
 
     Controles ControlesPlayer;
-    mapGenerator controleX;
+    MapGenerator controleX;
 
 	void Start () {
         ControlesPlayer = GameObject.Find("Inventario").GetComponent<Controles>();
-        controleX = GameObject.Find("Generador").GetComponent<mapGenerator>();
+        controleX = GameObject.Find("Generador").GetComponent<MapGenerator>();
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
         anima = gameObject.GetComponent<Animator>();
         offset = mycamera.transform.position;
@@ -49,8 +50,24 @@ public class player : MonoBehaviour {
         if (fronteo || anima.GetBool("Jump")) speed = 0;
         else speed = 0.08f;
 
-        if (grounded) jumping = false;
-        else jumping = true;
+        if (grounded)
+        {
+            jumping = false;
+            boolForceDown = true;
+        }
+            
+        else
+        {
+            if (boolForceDown)
+            {
+                if (rigth)
+                    myRB2D.AddForce(new Vector2(30, 0));
+                else
+                    myRB2D.AddForce(new Vector2(-30, 0));
+                boolForceDown = false;
+            }
+            jumping = true;
+        }
 
         anima.SetBool("hSpeed", run);
         anima.SetBool("Ground", grounded);
@@ -91,31 +108,34 @@ public class player : MonoBehaviour {
 
     public void saltar(bool Jump)
     {
-        if (rigth)
+        float yposition = transform.position.y;
+
+        if (Jump)
         {
-            if (grounded && fronteo && Jump && !ControlesPlayer.PAUSA)
+            if (grounded && fronteo && rigth && !ControlesPlayer.PAUSA)
             {
                 Jump = false;
                 fronteo = false;
 
-                myRB2D.AddForce(new Vector2(50, jumpForce));
+                myRB2D.AddForce(new Vector2(30, jumpForce));
 
                 anima.SetBool("Ground", false);
                 anima.SetBool("Jump", true); 
             }
+            else
+            {
+                if (grounded && fronteo && !rigth && !ControlesPlayer.PAUSA)
+                {
+                    Jump = false;
+                    fronteo = false;
+
+                    myRB2D.AddForce(new Vector2(-30, jumpForce));
+
+                    anima.SetBool("Ground", false);
+                    anima.SetBool("Jump", true);
+                }
         }
-        else
-        {
-            if (grounded && fronteo && Jump && !rigth && !ControlesPlayer.PAUSA)
-            {
-                Jump = false;
-                fronteo = false;
-
-                myRB2D.AddForce(new Vector2(-50, jumpForce));
-
-                anima.SetBool("Ground", false);
-                anima.SetBool("Jump", true); 
-            }
+        
         }
     }
 
@@ -142,7 +162,7 @@ public class player : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.X) && !ControlesPlayer.PAUSA)
         {
-            controleX.CalculoBloque(transform.position.x, transform.position.y,rigth);
+            controleX.UbicacionPersonaje(transform.position.x,transform.position.y, rigth);
         }
     }
 

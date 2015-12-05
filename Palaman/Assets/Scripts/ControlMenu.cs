@@ -8,31 +8,31 @@ public class ControlMenu : MonoBehaviour
 
     public void buttonclick(GameObject names)
     {
-
+        // recibo al boton al que le di click y uso su nombre en un switch
         switch (names.name)
         {
-            case "Continuar":
-                Debug.Log(names.name);
+            case "ButtonContinue":
+                Debug.Log(names.name); // voy al mapa del juego
                 break;
-            case "Juego Nuevo":
-                Application.LoadLevel("Level 01");
+            case "ButtonNewGame":
+                Application.LoadLevel("Level 01"); // Cargo el nivel 01
                 break;
-            case "Opciones":
-                continues.SetBool("Esconder", true);
-                newgame.SetBool("Esconder", true);
-                options.SetBool("Esconder", true);
-                exit.SetBool("Esconder", true);
-                Optionsub.SetBool("Esconder", true);
+            case "ButtonOptions":
+                continues.SetBool("Esconder", true); // escondemos el boton continuar
+                newgame.SetBool("Esconder", true);   // escondemos el boton juego nuevo
+                options.SetBool("Esconder", true);   // escondemos el boton opciones
+                exit.SetBool("Esconder", true);     // escondemos el boton exit
+                Optionsub.SetBool("Esconder", true); // mostramos el menu de opciones
                 break;
             case "Regresar":
-                continues.SetBool("Esconder", false);
-                newgame.SetBool("Esconder", false);
-                options.SetBool("Esconder", false);
-                exit.SetBool("Esconder", false);
-                Optionsub.SetBool("Esconder", false);
+                continues.SetBool("Esconder", false); // mostramos el boton continuar
+                newgame.SetBool("Esconder", false);   // mostramos el boton juego nuevo
+                options.SetBool("Esconder", false);   // mostramos el boton opciones
+                exit.SetBool("Esconder", false);      // mostramos el boton exit
+                Optionsub.SetBool("Esconder", false); // ocultamos el menu de opciones
                 break;
-            case "Salir":
-                Application.Quit();
+            case "ButtonExit":
+                Application.Quit(); // Cierro la app
                 break;
             default:
                 break;

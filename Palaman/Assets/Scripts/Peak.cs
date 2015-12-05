@@ -6,26 +6,32 @@ public class Peak : MonoBehaviour {
     float peakY;
     void Start()
     {
-        peakY = transform.position.y;
+        peakY = transform.position.y; // obtenemos la posicion del eje Y 
     }
 
     void Update()
     {
+        // si mi posicion actual es menor a mi posicion inicial menos 1
         if ( transform.position.y < peakY - 1)
         {
-            Destroy(this.gameObject);
+            Destroy(this.gameObject); // autodestruyo el objeto
         }
     }
+
     void OnTriggerEnter2D (Collider2D obj)
     {
-        if (obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)" || obj.gameObject.name == "Shalike")
+        // Si colisiono con lava, agua, personaje o SuperBloque
+        if (obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)" || obj.gameObject.name == "Shalike" || obj.gameObject.name == "SuperBlock")
         {
-            Destroy(this.gameObject);
+            Destroy(this.gameObject); // Autodestruyo el objeto
         }
         else
         {
-            Destroy(obj.gameObject);
-            Destroy(this.gameObject);
+            if (obj.tag == "Block") // es un bloque?
+            {
+                Destroy(obj.gameObject); // destruyo el otro objeto
+                Destroy(this.gameObject); // Autodestruyo el objeto    
+            }
         }
     }
 }

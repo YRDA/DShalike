@@ -5,8 +5,9 @@ using System;
 using System.Linq;
 using System.IO;
 
-public class mapGenerator : MonoBehaviour {
+public class MapGenerator : MonoBehaviour {
 
+    public GameObject point;
     public string nivel;
     float difBlockY = 1.736548f;
     float[] blokX = new float[1006];
@@ -36,35 +37,44 @@ public class mapGenerator : MonoBehaviour {
             bool endTxt = true;
             string linea;
 
+            // iniciamos un streamReader del archivo de texto para el nivel
             var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
 
-            while (endTxt)
+            while (endTxt) // Se repite el codigo hasta que ya no haya texto que leer
             {
-                linea = txtLevel.ReadLine();
+                linea = txtLevel.ReadLine(); // guardamos la linea leida
 
-                if (linea == null) endTxt = false;
+                if (linea == null) endTxt = false; // si la linea esta vacia el archivo se termino
 
-                string[] b = linea.Split("|"[0]);
+                // Separamos el string por el caracter | y lo guardamos en el arreglo dateblock
+                string[] dateBlock = linea.Split("|"[0]); 
 
                 float blockX,blockY;
-                
-                float.TryParse(b[0],out blockX);
-                float.TryParse(b[1], out blockY);
 
-                if (i < 1006)
+                // Convertimos el las coordenadas de string en flotante y lo guardamos en blockX
+                float.TryParse(dateBlock[0], out blockX);
+                // Convertimos el las coordenadas de string en flotante y lo guardamos en blockY
+                float.TryParse(dateBlock[1], out blockY);
+
+                //********************************************************
+                // Funcion para obetener las coordenadas en X de cada bloque
+                // para el calculo para saber donde colocar bloques nuevos
+                if (i < 1006) 
                 {
-                    blokX[i] = blockX;
-                    i += 1;    
+                    blokX[i] = blockX; // Guardamos en el arreglo las coordenadas de X
+                    i += 1;            // Incrementamos el contador i
                 }
-                
-
-                if (Convert.ToInt16(b[2]) == 1)
+                //********************************************************
+                 
+                // Debe de existir bloque 0:No 1:Si
+                if (Convert.ToInt16(dateBlock[2]) == 1)
                 {
-                    CrearBloques(blockX, blockY, b[3]);
+                    // Creamos el bloque pasando las coordenadas y el tipo de bloque que se colocara
+                    CrearBloques(blockX, blockY, dateBlock[3]); 
                 }
             }
 
-            txtLevel.Close();  
+            txtLevel.Close();  // cerramos el archivo de texto
         }
         catch (System.Exception e)
         {
@@ -76,45 +86,45 @@ public class mapGenerator : MonoBehaviour {
     void CrearBloques(float blkX,float blkY,String tyBl){
 
         #region Switch block
-        switch (tyBl)
+        switch (tyBl) // Entramos en un switch para saber que tipo de bloque colocaremos
         {
-            case "0":
+            case "0": // Super bloque
                 Instantiate(superBlock, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "1":
+            case "1": // Tierra sup
                 Instantiate(groundSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "2":
+            case "2": // Tierra inf
                 Instantiate(groundInf, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "3":
+            case "3": // Agua sup
                 Instantiate(waterSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "4":
+            case "4": // Agua Inf
                 Instantiate(waterInf, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "5":
+            case "5": // Lava sup
                 Instantiate(lavaSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "6":
+            case "6": // Lava inf
                 Instantiate(lavaInf, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "7":
+            case "7": // Roca sup
                 Instantiate(rockSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "8":
+            case "8": // Roca inf
                 Instantiate(rockInf, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "9":
+            case "9": // Tierra de cueva
                 Instantiate(groundCave, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "10":
+            case "10": // 
                 Instantiate(groundSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "11":
+            case "11": //
                 Instantiate(groundSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
-            case "12":
+            case "12": //
                 Instantiate(groundSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
 
@@ -124,40 +134,100 @@ public class mapGenerator : MonoBehaviour {
         #endregion
     }
 
-    public void CalculoBloque(float playerX, float playerY, bool righ)
+    #region Colocacion del Bloque Diagrama
+    /*****************************************************************************************
+     * 1) Primero nos ubicamos en las coordenadas X y calculamos mi posicion
+     *
+     *   x> ☻ <x1
+     * ▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣
+     * 
+     * 2) Hacia donde estoy viendo y verifico si existe un bloque delante-atras ABAJO
+     * 
+     *     ☻ 
+     * ▣▣X▣X▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣
+     * 
+     * 3) Si no existe lo coloco si no...
+     * 
+     *     ☻ 
+     * ▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣
+     * 
+     * 4) Verifico delante-atras del personaje
+     * 
+     *    X☻X
+     * ▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣
+     * 
+     * 
+     * 5) Y coloco si no existe un bloque
+     * 
+     *    ▣☻▣
+     * ▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣▣
+     * 
+     ******************************************************************************************/
+    #endregion
+
+    public void UbicacionPersonaje(float playerX, float playerY, bool righ)
     {
-        float Bloque1, Bloque2, Media;
+        // recorremos el arreglo de las coordenadas de cada bloque en X
         for (int i = 0; i < blokX.Length; i++)
         {
+            // si estamos dentro de las coordenadas en X de 2 boques
             if (blokX[i] < playerX && blokX[i + 1] > playerX)
             {
-                Bloque1 = blokX[i];
-                Bloque2 = blokX[i + 1];
-                Media = (Bloque1 - Bloque2) / 2;
-
-
-                    if (righ)
+                float media = (blokX[i + 1] - blokX[i]) / 2; // calculamos la distancia entre ambos bloques
+                if ( blokX[i] - media < playerX && playerX < blokX[i] + media ) // si estamos en el primer bloque
+                {
+                    CalculoBloque(i, playerY, righ);
+                }
+                else
+                {
+                    if (blokX[i] + media < playerX && playerX < blokX[i + 1] + media) // si estamos en el segundo
                     {
-                        blockExist.transform.position = new Vector3(Bloque1 + 1.48f, playerY - difBlockY, 0);
-                        if (Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
-                            CrearBloques(Bloque1 + 1.48f, (playerY - difBlockY) + 1.55f, "9");
-                        else
-                            CrearBloques(Bloque1 + 1.48f, (playerY - difBlockY) , "9");
+                        CalculoBloque(i+1, playerY, righ);
                     }
-                    else
-                    {
-                        blockExist.transform.position = new Vector3(Bloque1 - 1.48f, playerY - difBlockY, 0);
-                        if (Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
-                            CrearBloques(Bloque1 - 1.48f, (playerY - difBlockY) + 1.55f, "9");
-                        else
-                            CrearBloques(Bloque1 - 1.48f, (playerY - difBlockY), "9");
-                    }
-                    Destroy(GameObject.Find("checkBlockExist(Clone)"));
-
+                }
+                //Instantiate(point, new Vector2(blokX[i] - media, playerY - difBlockY), transform.rotation);
+                //Instantiate(point, new Vector2(blokX[i] + media, playerY - difBlockY), transform.rotation);
+                //Instantiate(point, new Vector2(blokX[i + 1] + media, playerY - difBlockY), transform.rotation);
                 break;
             }
         }
     }
 
+    void CalculoBloque(int i , float BY,bool righ2)
+    {
+        if (righ2)
+        {
+            // muevo el verificador de bloque adelante-abajo
+            blockExist.transform.position = new Vector3(blokX[i + 1], BY - difBlockY, 0);
+            // si existe bloque adelante-bajo de nuestra posicion
+            if (Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+            {
+                // muevo el verificador de bloque adelante
+                blockExist.transform.position = new Vector3(blokX[i + 1], BY, 0);
+                // si no existe bloque adelante de nuestra posicion
+                if (!Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+                    CrearBloques(blokX[i + 1], (BY - difBlockY) + 1.55f, "1");  // creamos bloque frente a nosotros              
+            }
+            else
+                CrearBloques(blokX[i + 1], BY - difBlockY, "1"); // creamos bloque enfrente-abajo
+        }
+        else
+        {
+            // muevo el verificador de bloque adelante-abajo
+            blockExist.transform.position = new Vector3(blokX[i - 1], BY - difBlockY, 0);
+            // si existe bloque adelante-bajo de nuestra posicion
+            if (Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+            {
+                // muevo el verificador de bloque adelante
+                blockExist.transform.position = new Vector3(blokX[i - 1], BY, 0);
+                // si no existe bloque adelante de nuestra posicion
+                if (!Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+                    CrearBloques(blokX[i - 1], (BY - difBlockY) + 1.55f, "1"); // creamos bloque atras
+            }
+            else
+                CrearBloques(blokX[i - 1], BY - difBlockY, "1"); // creamos bloque atras-abajo
+        }
+        Destroy(GameObject.Find("checkBlockExist(Clone)")); // destruyo el verficador de que existe un bloque
+    }
 }
 
