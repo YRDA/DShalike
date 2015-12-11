@@ -3,11 +3,10 @@ using System.Collections;
 
 public class Controles : MonoBehaviour {
   
-    public float nextJump = 0f;
+    float nextJump, timeOver;
     public float jumpRate = 1.0f;
-    bool pressButton = false;
-    string controlObject;
-    bool boolInventary = true;
+    public bool pressButton = false,boolInventary = true;
+    public string controlObject;
     float tiempoEspero = 0;
     public bool PAUSA;
     player palaman;
@@ -20,49 +19,80 @@ public class Controles : MonoBehaviour {
 
     void Update()
     {
-            botonesRL();
-            MenuPausa();
+        ActivePausa();
+        BotonesRL();
+        BotonesCPS();
+        
     }
 
-    private void MenuPausa()
+    private void BotonesCPS()
     {
-        // Si detectamos un click y fue encima del inventario
-        if (pressButton && controlObject == "Inventario") 
+        if (pressButton && Time.time > timeOver && !PAUSA)
         {
-            // Damos un tiempo para evitar que el proceso sea tan rapido que se muestre y oculte al mismo tiempo
-            if (Time.time > tiempoEspero) 
-            {
-                tiempoEspero = Time.time + 0.3f;
- 
-                if (boolInventary) // Si inventario esta oculto
-                {
-                    PAUSA = true; // Activamos Pausa
+            timeOver = Time.time + 0.5f;
 
-                    // Desplasamos el inventario
-                    for (int i = 0; i < 80; i++) 
-                    {
-                        // Movemos el inventario en el eje Y hacia abajo
-                        GameObject.Find("Inventario").transform.position = new Vector3(GameObject.Find("Inventario").transform.position.x, GameObject.Find("Inventario").transform.position.y - 0.1f, GameObject.Find("Inventario").transform.position.z);
-                    }
-                    boolInventary = false; // El inventario se esta mostrando
+            if (controlObject == "BtnBloque")
+            {
+                controlObject = "";
+                palaman.ColocarBloque();
+            }
+            else
+            {
+                if (controlObject == "BtnPico")
+                {
+                    controlObject = "";
+                    palaman.cavar();
+                    
                 }
                 else
                 {
-                    PAUSA = false; // Desactivamos Pausa
-                    
-                    // Desplasamos el inventario
-                    for (int i = 0; i < 80; i++)
+                    if (controlObject == "btnSalto" && palaman.fronteo)
                     {
-                        // Movemos el inventario en el eje Y hacia arriba
-                        GameObject.Find("Inventario").transform.position = new Vector3(GameObject.Find("Inventario").transform.position.x, GameObject.Find("Inventario").transform.position.y + 0.1f, GameObject.Find("Inventario").transform.position.z);
+                        controlObject = "";
+                        palaman.saltar();
                     }
-                    boolInventary = true; // El inventario esta oculto
                 }
             }
         }
     }
 
-    private void botonesRL()
+    private void ActivePausa()
+    {
+        // Si detectamos un click y fue encima del inventario
+        if (pressButton && controlObject == "Inventario")
+        {
+            controlObject = "";
+            if (Time.time > tiempoEspero && boolInventary)
+            {
+                tiempoEspero = Time.time + 1f;
+
+                if (PAUSA)
+                {
+                    PAUSA = false; // Desactivamos Pausa
+                    // Desplasamos el inventario
+                    for (int i = 0; i < 80; i++)
+                        // Movemos el inventario en el eje Y hacia abajo
+                        GameObject.Find("Inventario").transform.position = new Vector3(GameObject.Find("Inventario").transform.position.x, GameObject.Find("Inventario").transform.position.y + 0.1f, GameObject.Find("Inventario").transform.position.z);
+
+                    boolInventary = false; // El inventario esta oculto
+                }
+                else
+                {
+                    PAUSA = true; // Activamos Pausa
+                    // Desplasamos el inventario
+                    for (int i = 0; i < 80; i++)
+                        // Movemos el inventario en el eje Y hacia abajo
+                        GameObject.Find("Inventario").transform.position = new Vector3(GameObject.Find("Inventario").transform.position.x, GameObject.Find("Inventario").transform.position.y - 0.1f, GameObject.Find("Inventario").transform.position.z);
+
+                    boolInventary = false; // El inventario se esta mostrando
+                }
+            }
+            else
+                boolInventary = true;
+        }
+    }
+
+    private void BotonesRL()
     {
         if (pressButton) // si se detecta un click
         {
@@ -83,6 +113,7 @@ public class Controles : MonoBehaviour {
     void OnMouseUp()
     {
         pressButton = false; // Ya no hay click
+        palaman.caminar(0);
     }
 
 }

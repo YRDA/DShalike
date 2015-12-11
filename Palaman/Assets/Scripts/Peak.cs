@@ -4,8 +4,10 @@ using System.Collections;
 public class Peak : MonoBehaviour {
 
     float peakY;
+    player palaman;
     void Start()
     {
+        palaman = GameObject.Find("Shalike").GetComponent<player>();
         peakY = transform.position.y; // obtenemos la posicion del eje Y 
     }
 
@@ -29,6 +31,7 @@ public class Peak : MonoBehaviour {
         {
             if (obj.tag == "Block") // es un bloque?
             {
+                palaman.AddBlocks(obj.name);
                 Destroy(obj.gameObject); // destruyo el otro objeto
                 Destroy(this.gameObject); // Autodestruyo el objeto    
             }

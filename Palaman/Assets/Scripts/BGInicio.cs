@@ -77,7 +77,8 @@ public class BGInicio : MonoBehaviour {
              *   |      Mundo   [1] - [2]         |
              *   |________________________________|
              *    
-            */   
+            */
+            txtLevel.Close();
         }
     }
 }
