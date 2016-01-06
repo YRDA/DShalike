@@ -23,7 +23,7 @@ public class Peak : MonoBehaviour {
     void OnTriggerEnter2D (Collider2D obj)
     {
         // Si colisiono con lava, agua, personaje o SuperBloque
-        if (obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)" || obj.gameObject.name == "Shalike" || obj.gameObject.name == "SuperBlock")
+        if (obj.gameObject.name == "PuenteA(Clone)" || obj.gameObject.name == "Lava_inf(Clone)" || obj.gameObject.name == "Lava_sup(Clone)" || obj.gameObject.name == "Agua_inf(Clone)" || obj.gameObject.name == "Agua_sup(Clone)" || obj.gameObject.name == "Shalike" || obj.gameObject.name == "SuperBlock")
         {
             Destroy(this.gameObject); // Autodestruyo el objeto
         }

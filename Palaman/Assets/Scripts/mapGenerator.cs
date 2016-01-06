@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour {
     public GameObject rockSup;
     public GameObject rockInf;
     public GameObject groundCave;
-    public GameObject madera;
+    public GameObject madera,madera2;
 
 	void Start () {
         GenerarMapa();
@@ -37,9 +37,8 @@ public class MapGenerator : MonoBehaviour {
         {
             bool endTxt = true;
             string linea;
-
             // iniciamos un streamReader del archivo de texto para el nivel
-            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level"+nivel+".txt");
+            var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Level" + nivel + ".txt");
 
             while (endTxt) // Se repite el codigo hasta que ya no haya texto que leer
             {
@@ -120,7 +119,7 @@ public class MapGenerator : MonoBehaviour {
                 Instantiate(groundCave, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
             case "10": // 
-                Instantiate(superBlock, new Vector3(blkX, blkY, -1), transform.rotation);
+                Instantiate(madera, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
             case "11": //
                 Instantiate(superBlock, new Vector3(blkX, blkY, -1), transform.rotation);
@@ -210,6 +209,7 @@ public class MapGenerator : MonoBehaviour {
                 blockExist.transform.position = new Vector3(blokX[i + 1], BY, 0);
                 // si no existe bloque adelante de nuestra posicion
                 if (!Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+                    if(tipo != 4)
                     BloquesInventario(blokX[i + 1], (BY - difBlockY) + 1.55f, tipo);  // creamos bloque frente a nosotros              
             }
             else
@@ -226,6 +226,7 @@ public class MapGenerator : MonoBehaviour {
                 blockExist.transform.position = new Vector3(blokX[i - 1], BY, 0);
                 // si no existe bloque adelante de nuestra posicion
                 if (!Physics2D.OverlapCircle(blockExist.position, 0.3f, isBlock))
+                    if (tipo != 4)
                     BloquesInventario(blokX[i - 1], (BY - difBlockY) + 1.55f, tipo); // creamos bloque atras
             }
             else
@@ -236,6 +237,8 @@ public class MapGenerator : MonoBehaviour {
 
     public void BloquesInventario(float blkX, float blkY, int tyBl)
     {
+        player palaman = GameObject.Find("Shalike").GetComponent<player>();
+        palaman.cubo[palaman.BlocInkUse].pzas--;
         #region Switch block
         switch (tyBl) // Entramos en un switch para saber que tipo de bloque colocaremos
         {
@@ -252,7 +255,7 @@ public class MapGenerator : MonoBehaviour {
                 Instantiate(rockSup, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
             case 4: // Agua Inf
-                Instantiate(madera, new Vector3(blkX, blkY, -1), transform.rotation);
+                Instantiate(madera2, new Vector3(blkX, blkY, -1), transform.rotation);
                 break;
             case 5: // Lava sup
                 Instantiate(superBlock, new Vector3(blkX, blkY, -1), transform.rotation);

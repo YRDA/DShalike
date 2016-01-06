@@ -17,7 +17,8 @@ public class player : MonoBehaviour {
 
     int countVidas = 3;
     private Rigidbody2D myRB2D;
-    public GameObject mycamera, peakObj, btnblok, btnJumping, corazon_1, corazon_2, corazon_3;
+    public GameObject peakObj, btnblok, btnJumping, corazon_1, corazon_2, corazon_3;
+    GameObject mycamera;
     private Animator anima;
 
     public float speed;
@@ -33,21 +34,30 @@ public class player : MonoBehaviour {
     public float jumpForce;
 
     Controles ControlesPlayer;
+    PowerBar controlEspecial;
     MapGenerator controleX;
 
     public GameObject[] icono = new GameObject[20];
-    List<Space> cubo = new List<Space>();
+    public List<Space> cubo = new List<Space>();
 
-    int BlocInkUse = 0;
+    public int BlocInkUse = 0;
     Animator animaIco;
+
+    bool boolSpecial;
+    int gema;
+    public GameObject visionShalike, flashSpecial;
+
+    bool PAUSA;
 
 	void Start () {
         ChargeBlocks();
         animaIco = GameObject.Find("Block").GetComponent<Animator>();
+        controlEspecial = GameObject.Find("SpecialBar").GetComponent<PowerBar>();
         ControlesPlayer = GameObject.Find("Inventario").GetComponent<Controles>();
         controleX = GameObject.Find("Generador").GetComponent<MapGenerator>();
         myRB2D = gameObject.GetComponent<Rigidbody2D>();
         anima = gameObject.GetComponent<Animator>();
+        mycamera = GameObject.Find("Camera");
         offset = mycamera.transform.position;
 	}
 	
@@ -56,6 +66,16 @@ public class player : MonoBehaviour {
         mycamera.transform.position = new Vector3(this.transform.position.x + offset.x,this.transform.position.y + offset.y + 2,this.transform.position.z + offset.z);
         
         UpdateIconos();
+
+        PAUSA = ControlesPlayer.PAUSA;
+        if (!PAUSA)
+            PAUSA = controlEspecial.PAUSA;
+
+
+            if(PAUSA)
+                visionShalike.SetActive(false);
+        else
+                visionShalike.SetActive(true);
 
         if (fronteo || anima.GetBool("Jump") || !grounded) speed = 0;
         else speed = 0.08f;
@@ -121,7 +141,7 @@ public class player : MonoBehaviour {
 
     public void caminar(int caminando)
     {
-        if (caminando == -1 && !jumping && grounded && !ControlesPlayer.PAUSA)
+        if (caminando == -1 && !jumping && grounded && !boolSpecial && !PAUSA)
         {
             run = true;
             rigth = false;
@@ -134,7 +154,7 @@ public class player : MonoBehaviour {
         }
         else
         {
-            if (caminando == 1 && !jumping && grounded && !ControlesPlayer.PAUSA)
+            if (caminando == 1 && !jumping && grounded && !boolSpecial && !PAUSA)
             {
                 run = true;
                 rigth = true;
@@ -153,7 +173,7 @@ public class player : MonoBehaviour {
 
     public void saltar()
     {
-        if (grounded && fronteo && rigth && !ControlesPlayer.PAUSA)
+        if (grounded && fronteo && rigth && !boolSpecial && !PAUSA)
         {
             myRB2D.AddForce(new Vector2(20, jumpForce));
             fronteo = false;
@@ -162,7 +182,7 @@ public class player : MonoBehaviour {
         }
         else
         {
-            if (grounded && fronteo && !rigth && !ControlesPlayer.PAUSA)
+            if (grounded && fronteo && !rigth && !boolSpecial && !PAUSA)
             {
                 myRB2D.AddForce(new Vector2(-20, jumpForce));
 
@@ -175,7 +195,7 @@ public class player : MonoBehaviour {
 
     public void cavar()
     {
-        if (grounded && !jumping && !run && !ControlesPlayer.PAUSA)
+        if (grounded && !jumping && !run && !boolSpecial && !PAUSA)
         {
                 if (rigth)
                     Instantiate(peakObj, new Vector3(this.transform.position.x + 1.5f, this.transform.position.y, -1f), transform.rotation);
@@ -194,11 +214,10 @@ public class player : MonoBehaviour {
 
     public void ColocarBloque()
     {
-        if (grounded && !jumping && !run && !ControlesPlayer.PAUSA)
+        if (grounded && !jumping && !run && !boolSpecial && !PAUSA)
         {
             if (cubo[BlocInkUse].pzas > 0)
             {
-                cubo[BlocInkUse].pzas--;
                 controleX.UbicacionPersonaje(transform.position.x, transform.position.y, rigth,cubo[BlocInkUse].tipo);
             }
         }
@@ -238,21 +257,6 @@ public class player : MonoBehaviour {
             cubo.TrimExcess();            
             txtLevel.Close();
 
-            #region Lista Iconos
-            /*
-         * [00] = Super Bloque           [10] = 
-         * [01] = Tierra                 [11] = 
-         * [02] = Tierra Cueva           [12] = 
-         * [03] = Roca                   [13] = 
-         * [04] = Madera                 [14] = 
-         * [05] =                        [15] = 
-         * [06] =                        [16] = 
-         * [07] =                        [17] = 
-         * [08] =                        [18] = 
-         * [09] =                        [19] = 
-        */
-            #endregion
-
         }
         else
         {
@@ -265,6 +269,21 @@ public class player : MonoBehaviour {
             cubo.Add(new Space() { disponible = true, tipo = 0, pzas = 0, name = "" });
         }
     }
+
+    #region Lista Iconos
+    /*
+         * [00] = Super Bloque           [10] = 
+         * [01] = Tierra                 [11] = 
+         * [02] = Tierra Cueva           [12] = 
+         * [03] = Roca                   [13] = 
+         * [04] = Madera                 [14] = 
+         * [05] =                        [15] = 
+         * [06] =                        [16] = 
+         * [07] =                        [17] = 
+         * [08] =                        [18] = 
+         * [09] =                        [19] = 
+        */
+    #endregion
 
     public void UseBlock(string espacio)
     {
@@ -365,7 +384,6 @@ public class player : MonoBehaviour {
         int familiaTipo = 0;
         bool newIcono = false;
 
-        Debug.Log(nameBlock);
         switch (nameBlock)
         {
             case "Tierra_sup(Clone)":
@@ -476,5 +494,41 @@ public class player : MonoBehaviour {
         Debug.Log("El juego termino");
     }
 
+    public void StartSpecial(int special)
+    {
+        boolSpecial = true;
+        anima.SetBool("Special", true);
+        gema = special;
+        flashSpecial.SetActive(true);
+    }
+
+    public void Special()
+    {
+        if (rigth)
+            flashSpecial.transform.position = new Vector2(this.transform.position.x - 0.15f,this.transform.position.y + 0.3f);
+        else
+            flashSpecial.transform.position = new Vector2(this.transform.position.x + 0.15f, this.transform.position.y + 0.3f);
+
+        controlEspecial.boolSpecial = true;
+        Animator animaFlash = GameObject.Find("FlashSpecial").GetComponent<Animator>();
+        animaFlash.SetInteger("Special", gema);
+    }
+
+    public void FinishPower()
+    {
+        controlEspecial.boolSpecial = false;
+    }
+
+    public void PreFinishSpecial()
+    {
+        flashSpecial.SetActive(false);
+    }
+
+    public void FinishSpecial()
+    {
+        
+        boolSpecial = false;
+        anima.SetBool("Special", false);
+    }
 }
 

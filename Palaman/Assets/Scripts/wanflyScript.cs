@@ -3,7 +3,7 @@ using System.Collections;
 
 public class wanflyScript : MonoBehaviour {
 
-    public float speed = 0.02f, playerX = 0, playerY = 0;
+    public float speed = 0.03f, playerX = 0, playerY = 0;
     public Transform checkBarWanfly;
     public LayerMask existBarWanfly;
     bool barra;
@@ -13,14 +13,10 @@ public class wanflyScript : MonoBehaviour {
     Controles controlX;
     Animator anima;
     public bool stepPlayer;
-    float timeOver;
-    player shalike;
-    
+    float timeOver;    
 
     void Start()
     {
-        // obtenemos referencia al script de shalike
-        shalike = GameObject.Find("Shalike").GetComponent<player>();
         // obtenemos referencia al animator de wanfly
         anima = gameObject.GetComponent<Animator>();
         // obtenemos referencia al script del inventario
@@ -29,8 +25,8 @@ public class wanflyScript : MonoBehaviour {
 
 	void Update () 
     {
-        playerX = shalike.gameObject.transform.position.x; // actualizamos las coordenadas en X del personaje
-        playerY = shalike.gameObject.transform.position.y; // actualizamos las coordenadas en Y del personaje
+        playerX = GameObject.Find("Shalike").gameObject.transform.position.x; // actualizamos las coordenadas en X del personaje
+        playerY = GameObject.Find("Shalike").gameObject.transform.position.y; // actualizamos las coordenadas en Y del personaje
 
         // Si no esta activa PAUSA y Seguir al personaje
         if (!controlX.PAUSA && !stepPlayer) 
@@ -107,6 +103,9 @@ public class wanflyScript : MonoBehaviour {
         // si chocamos con el personaje nos destruimos
         if (col.gameObject.tag == "Player")
         {
+            player shalike;
+            shalike = GameObject.Find("Shalike").GetComponent<player>();
+            shalike.Vidas(-1);
             Destroy(this.gameObject);
         }
     }

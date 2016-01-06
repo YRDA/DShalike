@@ -10,9 +10,11 @@ public class Controles : MonoBehaviour {
     float tiempoEspero = 0;
     public bool PAUSA;
     player palaman;
+    PowerBar PAUSE2;
 
     void Start()
     {
+        PAUSE2 = GameObject.Find("SpecialBar").GetComponent<PowerBar>();
         // referenciamos el scrip player
         palaman = GameObject.Find("Shalike").GetComponent<player>();
     }
@@ -22,7 +24,6 @@ public class Controles : MonoBehaviour {
         ActivePausa();
         BotonesRL();
         BotonesCPS();
-        
     }
 
     private void BotonesCPS()
@@ -42,7 +43,6 @@ public class Controles : MonoBehaviour {
                 {
                     controlObject = "";
                     palaman.cavar();
-                    
                 }
                 else
                 {
@@ -50,6 +50,13 @@ public class Controles : MonoBehaviour {
                     {
                         controlObject = "";
                         palaman.saltar();
+                    }
+                    else
+                    {
+                        if (controlObject == "BtnAtaque")
+                        {
+                            Debug.Log("Atacando");
+                        }
                     }
                 }
             }
@@ -59,7 +66,7 @@ public class Controles : MonoBehaviour {
     private void ActivePausa()
     {
         // Si detectamos un click y fue encima del inventario
-        if (pressButton && controlObject == "Inventario")
+        if (pressButton && controlObject == "Inventario" && !PAUSE2.PAUSA)
         {
             controlObject = "";
             if (Time.time > tiempoEspero && boolInventary)

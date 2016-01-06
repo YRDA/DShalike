@@ -25,7 +25,7 @@ public class MasterBlock : MonoBehaviour {
         MapCreator mapeo = GameObject.Find("Level0").GetComponent<MapCreator>();
 
         // si el valor del contador de tipo de bloque llega al maximo valor
-        if (typeBlock == 9)
+        if (typeBlock == 10)
         {
             typeBlock = 0; // lo reiniciamos
             // actualizamos de tipo de bloque llamando la funcion de MapCreator y pasandole coordenadas y valor del bloque
