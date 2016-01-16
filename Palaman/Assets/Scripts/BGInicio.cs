@@ -48,37 +48,67 @@ public class BGInicio : MonoBehaviour {
     {
         string linea;
         // Iniciamos un StreamReader para el archivo dates
-        var txtLevel = new StreamReader(Application.dataPath + "\\Levels/txt/Dates.txt");
-
-        linea = txtLevel.ReadLine(); // leer linea
-
-        if (linea != null) // si la linea leia no esta vacia
+        string direccion = pathForDocumentsFile("Dates.txt");
+        if (File.Exists(direccion))
         {
-            btnContinue.SetActive(true); // activamos boton Continuar
+            var txtLevel = new StreamReader(direccion);
 
-            // separamos los datos por el simbolo | y los guardamos en el arreglo datesValues
-            string[] datesValues = linea.Split("|"[0]); 
+            linea = txtLevel.ReadLine(); // leer linea
 
-            // Obtenemos la propiedad de texto del boton continuar [Vidas,Nivel,Gemas]
-            lifes = GameObject.Find("TxtLifes").GetComponent<Text>();
-            world = GameObject.Find("Mundo").GetComponent<Text>();
-            gemas = GameObject.Find("Gemas").GetComponent<Text>();
+            if (linea != null) // si la linea leia no esta vacia
+            {
+                btnContinue.SetActive(true); // activamos boton Continuar
 
-            // modificamos el texto del boton continuar [Vidas,Nivel,Gemas]
-            lifes.text = "X " + datesValues[0];
-            world.text = "Mundo\n" + datesValues[1] + " - " + datesValues[2];
-            gemas.text = "Gemas\n" + datesValues[3];
+                // separamos los datos por el simbolo | y los guardamos en el arreglo datesValues
+                string[] datesValues = linea.Split("|"[0]);
 
-            /*        ------  Formato ------
-             *    ________________________________
-             *   |                                | 
-             *   |  [Imagen] X [0]     Gemas [3]  |
-             *   |                                |
-             *   |      Mundo   [1] - [2]         |
-             *   |________________________________|
-             *    
-            */
+                // Obtenemos la propiedad de texto del boton continuar [Vidas,Nivel,Gemas]
+                lifes = GameObject.Find("TxtLifes").GetComponent<Text>();
+                world = GameObject.Find("Mundo").GetComponent<Text>();
+                gemas = GameObject.Find("Gemas").GetComponent<Text>();
+
+                // modificamos el texto del boton continuar [Vidas,Nivel,Gemas]
+                lifes.text = "X " + datesValues[0];
+                world.text = "Mundo\n" + datesValues[1] + " - " + datesValues[2];
+                gemas.text = "Gemas\n" + datesValues[3];
+
+                /*        ------  Formato ------
+                 *    ________________________________
+                 *   |                                | 
+                 *   |  [Imagen] X [0]     Gemas [3]  |
+                 *   |                                |
+                 *   |      Mundo   [1] - [2]         |
+                 *   |________________________________|
+                 *    
+                */
+                
+            }
             txtLevel.Close();
+        }
+        else
+        {
+            Debug.Log("Error no existe el archivo");
+        }
+    }
+
+    public string pathForDocumentsFile(string filename)
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            string path = Application.dataPath.Substring(0, Application.dataPath.Length - 5);
+            return Path.Combine(Path.Combine(path, "Documents"), filename);
+        }
+
+        else if (Application.platform == RuntimePlatform.Android)
+        {
+            string path = Application.persistentDataPath;
+            return Path.Combine(path, filename);
+        }
+
+        else
+        {
+            string path = Application.dataPath;
+            return Path.Combine(Path.Combine(path,"Levels/txt/"), filename);
         }
     }
 }
